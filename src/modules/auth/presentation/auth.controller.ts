@@ -8,7 +8,9 @@ import { LoginUseCase } from '../application/use-cases/login.use-case';
 import { RefreshTokenUseCase } from '../application/use-cases/refresh-token.use-case';
 import { LogoutUseCase } from '../application/use-cases/logout.use-case';
 import { GetCurrentUserUseCase } from '../application/use-cases/get-current-user.use-case';
+import { GoogleSignInUseCase } from '../application/use-cases/google-sign-in.use-case';
 import {
+  type GoogleSignInBody,
   type LoginBody,
   type LogoutBody,
   type RefreshBody,
@@ -35,6 +37,13 @@ export class AuthController {
   login = asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const body = req.body as LoginBody;
     const useCase = container.resolve(LoginUseCase);
+    const result = await useCase.execute({ ...body, ...clientMeta(req) });
+    res.status(StatusCodes.OK).json(ok(result));
+  });
+
+  googleSignIn = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+    const body = req.body as GoogleSignInBody;
+    const useCase = container.resolve(GoogleSignInUseCase);
     const result = await useCase.execute({ ...body, ...clientMeta(req) });
     res.status(StatusCodes.OK).json(ok(result));
   });

@@ -5,6 +5,7 @@ export interface UserEntity {
   id: string;
   email: string;
   passwordHash: string | null;
+  googleId: string | null;
   role: UserRole;
   status: UserStatus;
   firstName: string | null;

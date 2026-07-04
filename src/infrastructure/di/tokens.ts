@@ -6,4 +6,6 @@ export const DI = {
   RefreshTokenRepository: Symbol('RefreshTokenRepository'),
   PasswordHasher: Symbol('PasswordHasher'),
   TokenService: Symbol('TokenService'),
+  GoogleOAuthClient: Symbol('GoogleOAuthClient'),
+  GoogleOAuthService: Symbol('GoogleOAuthService'),
 } as const;

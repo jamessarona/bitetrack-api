@@ -47,6 +47,9 @@ const envSchema = z.object({
   RATE_LIMIT_MAX: z.coerce.number().int().positive().default(100),
 
   TRUST_PROXY: booleanFromString.default(false),
+
+  GOOGLE_CLIENT_ID: z.string().optional(),
+  GOOGLE_CLIENT_IDS: z.string().optional(),
 });
 
 export type Env = z.infer<typeof envSchema>;

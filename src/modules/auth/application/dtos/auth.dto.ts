@@ -21,6 +21,12 @@ export interface RefreshInput {
   ipAddress?: string | undefined;
 }
 
+export interface GoogleSignInInput {
+  idToken: string;
+  userAgent?: string | undefined;
+  ipAddress?: string | undefined;
+}
+
 export interface AuthResult {
   user: PublicUser;
   accessToken: string;

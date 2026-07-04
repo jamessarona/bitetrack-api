@@ -53,6 +53,18 @@ export const config = {
     windowMs: env.RATE_LIMIT_WINDOW_MS,
     max: env.RATE_LIMIT_MAX,
   },
+
+  google: {
+    clientIds: parseGoogleClientIds(env.GOOGLE_CLIENT_IDS ?? env.GOOGLE_CLIENT_ID),
+  },
 } as const;
+
+function parseGoogleClientIds(value?: string): string[] {
+  if (!value?.trim()) return [];
+  return value
+    .split(',')
+    .map((id) => id.trim())
+    .filter(Boolean);
+}
 
 export type AppConfig = typeof config;
