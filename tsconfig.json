@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "lib": ["ES2022"],
+    "outDir": "dist",
+    "rootDir": ".",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+
+    /* Decorators (tsyringe dependency injection) */
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+
+    /* Strictness - best practice */
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "exactOptionalPropertyTypes": true,
+    "forceConsistentCasingInFileNames": true,
+
+    /* Interop / emit */
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "declaration": false,
+    "sourceMap": true,
+    "removeComments": false,
+    "skipLibCheck": true,
+    "types": ["node", "jest"]
+  },
+  "include": ["src/**/*.ts", "prisma/**/*.ts", "tests/**/*.ts"],
+  "exclude": ["node_modules", "dist", "coverage"]
+}

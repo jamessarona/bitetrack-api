@@ -1,0 +1,7 @@
+dist
+coverage
+node_modules
+prisma/generated
+*.md
+pnpm-lock.yaml
+package-lock.json
