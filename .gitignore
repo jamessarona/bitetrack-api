@@ -1,21 +1,17 @@
-# Dependencies
 node_modules/
 .pnp/
 .pnp.js
 
-# Build output
 dist/
 build/
 *.tsbuildinfo
 
-# Environment files — only .env.sample is tracked; copy it per environment locally.
 .env
 .env.*
 !.env.sample
 .env.local
 .env.*.local
 
-# Logs
 logs/
 *.log
 npm-debug.log*
@@ -23,15 +19,12 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Test / coverage
 coverage/
 .nyc_output/
 
-# Prisma
 prisma/*.db
 prisma/*.db-journal
 
-# OS / editor
 .DS_Store
 Thumbs.db
 .idea/
@@ -39,9 +32,7 @@ Thumbs.db
 !.vscode/extensions.json
 !.vscode/settings.json
 
-# Docker
 docker-data/
 
-# Misc
 tmp/
 temp/

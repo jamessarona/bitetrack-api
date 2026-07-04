@@ -2,10 +2,6 @@ import { Redis } from 'ioredis';
 import { config } from '@/config';
 import { logger } from '@/core/logger/logger';
 
-/**
- * Shared Redis connection used for caching, rate limiting, session storage and
- * real-time location fan-out.
- */
 export const redis = new Redis(config.redis.url, {
   maxRetriesPerRequest: null,
   enableReadyCheck: true,

@@ -11,11 +11,9 @@
       "@/*": ["./src/*"]
     },
 
-    /* Decorators (tsyringe dependency injection) */
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
 
-    /* Strictness - best practice */
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
@@ -33,7 +31,6 @@
     "exactOptionalPropertyTypes": true,
     "forceConsistentCasingInFileNames": true,
 
-    /* Interop / emit */
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "declaration": false,

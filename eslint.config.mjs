@@ -52,7 +52,6 @@ export default tseslint.config(
     },
   },
   {
-    // Seed and standalone scripts may log to stdout.
     files: ['prisma/**/*.ts', '*.config.ts'],
     rules: {
       'no-console': 'off',

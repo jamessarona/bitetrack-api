@@ -5,7 +5,6 @@ import { ok } from '@/core/http/api-response';
 import { prisma } from '@/infrastructure/database/prisma';
 import { redis } from '@/infrastructure/cache/redis';
 
-/** Liveness: the process is up. Cheap and dependency-free. */
 export function liveness(_req: Request, res: Response): void {
   res.status(StatusCodes.OK).json(
     ok({
@@ -18,7 +17,6 @@ export function liveness(_req: Request, res: Response): void {
   );
 }
 
-/** Readiness: dependencies (database, cache) are reachable. */
 export async function readiness(_req: Request, res: Response): Promise<void> {
   const checks: Record<string, 'up' | 'down'> = { database: 'down', redis: 'down' };
 

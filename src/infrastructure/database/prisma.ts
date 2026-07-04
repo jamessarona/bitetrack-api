@@ -3,11 +3,6 @@ import { PrismaClient } from '@prisma/client';
 import { config } from '@/config';
 import { logger } from '@/core/logger/logger';
 
-/**
- * Prisma 7 requires a driver adapter. We use node-postgres (`pg`) over TCP.
- * Timeouts are set explicitly because v7 driver-adapter defaults differ from
- * the historical v6 behaviour.
- */
 const adapter = new PrismaPg({
   connectionString: config.database.url,
   connectionTimeoutMillis: 5_000,
@@ -20,8 +15,6 @@ const createPrismaClient = (): PrismaClient =>
     log: config.isDevelopment ? ['query', 'warn', 'error'] : ['warn', 'error'],
   });
 
-// Reuse a single client across hot-reloads in development to avoid exhausting
-// the connection pool.
 const globalForPrisma = globalThis as unknown as {
   prisma?: PrismaClient;
 };

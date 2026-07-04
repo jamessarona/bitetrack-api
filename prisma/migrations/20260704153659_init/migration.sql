@@ -1,31 +1,26 @@
--- Required PostgreSQL extensions (idempotent; also provisioned by docker init).
+CREATE SCHEMA IF NOT EXISTS "bitetrack_dev";
+
+SET search_path TO "bitetrack_dev", "public";
+
 CREATE EXTENSION IF NOT EXISTS "postgis";
 CREATE EXTENSION IF NOT EXISTS "pg_trgm";
 CREATE EXTENSION IF NOT EXISTS "vector";
 CREATE EXTENSION IF NOT EXISTS "citext";
 
--- CreateEnum
 CREATE TYPE "UserRole" AS ENUM ('CUSTOMER', 'VENDOR', 'ADMIN');
 
--- CreateEnum
 CREATE TYPE "UserStatus" AS ENUM ('ACTIVE', 'SUSPENDED', 'DELETED');
 
--- CreateEnum
 CREATE TYPE "VendorVerificationStatus" AS ENUM ('PENDING', 'VERIFIED', 'REJECTED');
 
--- CreateEnum
 CREATE TYPE "VendorStatus" AS ENUM ('OFFLINE', 'ONLINE', 'ON_ROUTE', 'AVAILABLE', 'BUSY');
 
--- CreateEnum
 CREATE TYPE "ShiftStatus" AS ENUM ('ACTIVE', 'ENDED');
 
--- CreateEnum
 CREATE TYPE "DevicePlatform" AS ENUM ('IOS', 'ANDROID', 'WEB');
 
--- CreateEnum
 CREATE TYPE "NotificationType" AS ENUM ('VENDOR_NEARBY', 'FAVORITE_VENDOR_NEARBY', 'PROMOTION', 'SHIFT_STARTED', 'SHIFT_ENDED', 'SYSTEM');
 
--- CreateTable
 CREATE TABLE "users" (
     "id" UUID NOT NULL,
     "email" CITEXT NOT NULL,
@@ -43,7 +38,6 @@ CREATE TABLE "users" (
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
 CREATE TABLE "refresh_tokens" (
     "id" UUID NOT NULL,
     "userId" UUID NOT NULL,
@@ -57,7 +51,6 @@ CREATE TABLE "refresh_tokens" (
     CONSTRAINT "refresh_tokens_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
 CREATE TABLE "categories" (
     "id" UUID NOT NULL,
     "name" TEXT NOT NULL,
@@ -67,7 +60,6 @@ CREATE TABLE "categories" (
     CONSTRAINT "categories_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
 CREATE TABLE "vendor_profiles" (
     "id" UUID NOT NULL,
     "userId" UUID NOT NULL,
@@ -87,7 +79,6 @@ CREATE TABLE "vendor_profiles" (
     CONSTRAINT "vendor_profiles_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
 CREATE TABLE "vendor_shifts" (
     "id" UUID NOT NULL,
     "vendorId" UUID NOT NULL,
@@ -98,7 +89,6 @@ CREATE TABLE "vendor_shifts" (
     CONSTRAINT "vendor_shifts_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
 CREATE TABLE "vendor_location_pings" (
     "id" UUID NOT NULL,
     "shiftId" UUID NOT NULL,
@@ -110,7 +100,6 @@ CREATE TABLE "vendor_location_pings" (
     CONSTRAINT "vendor_location_pings_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
 CREATE TABLE "products" (
     "id" UUID NOT NULL,
     "vendorId" UUID NOT NULL,
@@ -126,7 +115,6 @@ CREATE TABLE "products" (
     CONSTRAINT "products_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
 CREATE TABLE "reviews" (
     "id" UUID NOT NULL,
     "vendorId" UUID NOT NULL,
@@ -139,7 +127,6 @@ CREATE TABLE "reviews" (
     CONSTRAINT "reviews_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
 CREATE TABLE "review_photos" (
     "id" UUID NOT NULL,
     "reviewId" UUID NOT NULL,
@@ -148,7 +135,6 @@ CREATE TABLE "review_photos" (
     CONSTRAINT "review_photos_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
 CREATE TABLE "favorites" (
     "id" UUID NOT NULL,
     "customerId" UUID NOT NULL,
@@ -158,7 +144,6 @@ CREATE TABLE "favorites" (
     CONSTRAINT "favorites_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
 CREATE TABLE "devices" (
     "id" UUID NOT NULL,
     "userId" UUID NOT NULL,
@@ -170,7 +155,6 @@ CREATE TABLE "devices" (
     CONSTRAINT "devices_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
 CREATE TABLE "notifications" (
     "id" UUID NOT NULL,
     "userId" UUID NOT NULL,
@@ -184,123 +168,83 @@ CREATE TABLE "notifications" (
     CONSTRAINT "notifications_pkey" PRIMARY KEY ("id")
 );
 
--- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
--- CreateIndex
 CREATE INDEX "users_role_idx" ON "users"("role");
 
--- CreateIndex
 CREATE INDEX "users_status_idx" ON "users"("status");
 
--- CreateIndex
 CREATE UNIQUE INDEX "refresh_tokens_tokenHash_key" ON "refresh_tokens"("tokenHash");
 
--- CreateIndex
 CREATE INDEX "refresh_tokens_userId_idx" ON "refresh_tokens"("userId");
 
--- CreateIndex
 CREATE INDEX "refresh_tokens_expiresAt_idx" ON "refresh_tokens"("expiresAt");
 
--- CreateIndex
 CREATE UNIQUE INDEX "categories_slug_key" ON "categories"("slug");
 
--- CreateIndex
 CREATE INDEX "categories_name_idx" ON "categories"("name");
 
--- CreateIndex
 CREATE UNIQUE INDEX "vendor_profiles_userId_key" ON "vendor_profiles"("userId");
 
--- CreateIndex
 CREATE INDEX "vendor_profiles_categoryId_idx" ON "vendor_profiles"("categoryId");
 
--- CreateIndex
 CREATE INDEX "vendor_profiles_status_idx" ON "vendor_profiles"("status");
 
--- CreateIndex
 CREATE INDEX "vendor_profiles_verificationStatus_idx" ON "vendor_profiles"("verificationStatus");
 
--- CreateIndex
 CREATE INDEX "vendor_shifts_vendorId_idx" ON "vendor_shifts"("vendorId");
 
--- CreateIndex
 CREATE INDEX "vendor_shifts_status_idx" ON "vendor_shifts"("status");
 
--- CreateIndex
 CREATE INDEX "vendor_location_pings_shiftId_idx" ON "vendor_location_pings"("shiftId");
 
--- CreateIndex
 CREATE INDEX "vendor_location_pings_recordedAt_idx" ON "vendor_location_pings"("recordedAt");
 
--- CreateIndex
 CREATE INDEX "products_vendorId_idx" ON "products"("vendorId");
 
--- CreateIndex
 CREATE INDEX "reviews_vendorId_idx" ON "reviews"("vendorId");
 
--- CreateIndex
 CREATE UNIQUE INDEX "reviews_vendorId_customerId_key" ON "reviews"("vendorId", "customerId");
 
--- CreateIndex
 CREATE INDEX "review_photos_reviewId_idx" ON "review_photos"("reviewId");
 
--- CreateIndex
 CREATE INDEX "favorites_vendorId_idx" ON "favorites"("vendorId");
 
--- CreateIndex
 CREATE UNIQUE INDEX "favorites_customerId_vendorId_key" ON "favorites"("customerId", "vendorId");
 
--- CreateIndex
 CREATE UNIQUE INDEX "devices_fcmToken_key" ON "devices"("fcmToken");
 
--- CreateIndex
 CREATE INDEX "devices_userId_idx" ON "devices"("userId");
 
--- CreateIndex
 CREATE INDEX "notifications_userId_idx" ON "notifications"("userId");
 
--- CreateIndex
 CREATE INDEX "notifications_readAt_idx" ON "notifications"("readAt");
 
--- AddForeignKey
 ALTER TABLE "refresh_tokens" ADD CONSTRAINT "refresh_tokens_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
--- AddForeignKey
 ALTER TABLE "vendor_profiles" ADD CONSTRAINT "vendor_profiles_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
--- AddForeignKey
 ALTER TABLE "vendor_profiles" ADD CONSTRAINT "vendor_profiles_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "categories"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
--- AddForeignKey
 ALTER TABLE "vendor_shifts" ADD CONSTRAINT "vendor_shifts_vendorId_fkey" FOREIGN KEY ("vendorId") REFERENCES "vendor_profiles"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
--- AddForeignKey
 ALTER TABLE "vendor_location_pings" ADD CONSTRAINT "vendor_location_pings_shiftId_fkey" FOREIGN KEY ("shiftId") REFERENCES "vendor_shifts"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
--- AddForeignKey
 ALTER TABLE "products" ADD CONSTRAINT "products_vendorId_fkey" FOREIGN KEY ("vendorId") REFERENCES "vendor_profiles"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
--- AddForeignKey
 ALTER TABLE "reviews" ADD CONSTRAINT "reviews_vendorId_fkey" FOREIGN KEY ("vendorId") REFERENCES "vendor_profiles"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
--- AddForeignKey
 ALTER TABLE "reviews" ADD CONSTRAINT "reviews_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
--- AddForeignKey
 ALTER TABLE "review_photos" ADD CONSTRAINT "review_photos_reviewId_fkey" FOREIGN KEY ("reviewId") REFERENCES "reviews"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
--- AddForeignKey
 ALTER TABLE "favorites" ADD CONSTRAINT "favorites_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
--- AddForeignKey
 ALTER TABLE "favorites" ADD CONSTRAINT "favorites_vendorId_fkey" FOREIGN KEY ("vendorId") REFERENCES "vendor_profiles"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
--- AddForeignKey
 ALTER TABLE "devices" ADD CONSTRAINT "devices_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
--- AddForeignKey
 ALTER TABLE "notifications" ADD CONSTRAINT "notifications_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
--- GiST spatial indexes for fast geospatial lookups (nearby vendors, trails).
 CREATE INDEX "vendor_profiles_lastLocation_idx" ON "vendor_profiles" USING GIST ("lastLocation");
 CREATE INDEX "vendor_location_pings_location_idx" ON "vendor_location_pings" USING GIST ("location");

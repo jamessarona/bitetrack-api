@@ -60,11 +60,9 @@ export class JwtTokenService implements TokenService {
   }
 }
 
-/** Parses a simple duration string like `15m`, `30d`, `1h` into milliseconds. */
 function parseDurationMs(value: string): number {
   const match = /^(\d+)([smhd])$/.exec(value.trim());
   if (!match) {
-    // Fallback: treat as seconds if no unit is provided.
     const seconds = Number(value);
     return Number.isFinite(seconds) ? seconds * 1000 : 30 * 24 * 60 * 60 * 1000;
   }

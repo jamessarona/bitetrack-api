@@ -1,6 +1,3 @@
-/**
- * Consistent JSON envelope for every API response.
- */
 export interface SuccessResponse<T> {
   success: true;
   data: T;

@@ -23,13 +23,11 @@ function requestLogger(req: Request): typeof logger {
 }
 
 export const errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
-  // Known, operational application errors.
   if (err instanceof AppError) {
     res.status(err.statusCode).json(fail(err.code, err.message, err.details));
     return;
   }
 
-  // Request body/query validation failures.
   if (err instanceof ZodError) {
     const details = err.issues.map((issue) => ({
       path: issue.path.join('.'),
@@ -41,7 +39,6 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
     return;
   }
 
-  // Prisma unique-constraint violation -> 409 Conflict.
   if (isPrismaKnownError(err)) {
     if (err.code === 'P2002') {
       res.status(StatusCodes.CONFLICT).json(fail('CONFLICT', 'Resource already exists'));
@@ -53,7 +50,6 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
     }
   }
 
-  // Unexpected error: log everything, expose nothing sensitive.
   requestLogger(req).error({ err }, 'Unhandled error');
   const message = config.isProduction ? 'Something went wrong' : String((err as Error)?.message);
   res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(fail('INTERNAL_SERVER_ERROR', message));

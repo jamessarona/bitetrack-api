@@ -11,10 +11,6 @@ import { apiRateLimiter } from '@/core/middleware/rate-limit';
 import { healthRouter } from '@/modules/health/health.routes';
 import { apiRouter } from '@/routes';
 
-/**
- * Builds and configures the Express application (no network binding here so it
- * can be imported directly by integration tests).
- */
 export function createApp(): Express {
   const app = express();
 
@@ -23,7 +19,6 @@ export function createApp(): Express {
   }
   app.disable('x-powered-by');
 
-  // Security & performance middleware.
   app.use(helmet());
   app.use(
     cors({
@@ -37,13 +32,10 @@ export function createApp(): Express {
   app.use(cookieParser(config.cookie.secret));
   app.use(httpLogger);
 
-  // Health/probe endpoints live at the root (no version, no rate limit).
   app.use('/', healthRouter);
 
-  // Versioned API surface.
   app.use(config.app.apiPrefix, apiRateLimiter, apiRouter);
 
-  // Fallbacks.
   app.use(notFoundHandler);
   app.use(errorHandler);
 

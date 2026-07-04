@@ -3,15 +3,6 @@ import path from 'node:path';
 import dotenv from 'dotenv';
 import { z } from 'zod';
 
-/**
- * Loads environment variables from the environment-specific dotenv file,
- * then validates and coerces them into a strongly-typed, immutable object.
- *
- * Load order (later files never override already-set process.env values):
- *   1. Real process environment (e.g. injected by Kubernetes / CI)
- *   2. `.env.<NODE_ENV>`
- *   3. `.env`
- */
 function loadDotenvFiles(): void {
   const nodeEnv = process.env.NODE_ENV ?? 'development';
   const candidates = [`.env.${nodeEnv}`, '.env'];

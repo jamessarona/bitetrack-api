@@ -10,10 +10,6 @@ interface IssueContext {
   ipAddress?: string | undefined;
 }
 
-/**
- * Issues an access token and a rotating refresh token for a user, persisting
- * only the hash of the refresh token.
- */
 @injectable()
 export class AuthTokenIssuer {
   constructor(

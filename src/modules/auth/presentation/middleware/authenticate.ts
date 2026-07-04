@@ -16,7 +16,6 @@ function extractBearerToken(req: Request): string | null {
   return token.length > 0 ? token : null;
 }
 
-/** Requires a valid JWT access token. Attaches the decoded payload to `req.auth`. */
 export function authenticate(req: Request, _res: Response, next: NextFunction): void {
   const token = extractBearerToken(req);
   if (!token) {

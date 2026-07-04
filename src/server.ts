@@ -14,10 +14,6 @@ export interface RunningServer {
   io: SocketServer;
 }
 
-/**
- * Boots dependencies, starts the HTTP + realtime server and wires graceful
- * shutdown so in-flight work drains cleanly on SIGTERM/SIGINT.
- */
 export async function startServer(): Promise<RunningServer> {
   await connectDatabase();
   await connectRedis();
@@ -31,11 +27,11 @@ export async function startServer(): Promise<RunningServer> {
   });
 
   logger.info(
-    `🚀 ${config.app.name} listening on http://${config.app.host}:${config.app.port}${config.app.apiPrefix} (${config.env})`,
+    `${config.app.name} listening on http://${config.app.host}:${config.app.port}${config.app.apiPrefix} (${config.env})`,
   );
 
   const shutdown = async (signal: string): Promise<void> => {
-    logger.info({ signal }, 'Shutting down gracefully...');
+    logger.info({ signal }, 'Shutting down');
     void io.close();
     httpServer.close();
     await Promise.allSettled([disconnectDatabase(), disconnectRedis()]);

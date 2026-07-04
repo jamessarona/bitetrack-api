@@ -36,7 +36,6 @@ export class RefreshTokenUseCase {
       throw new UnauthorizedError('Account is not active');
     }
 
-    // Rotate: revoke the old token before issuing a new pair.
     await this.refreshTokens.revokeById(stored.id);
 
     return this.tokenIssuer.issue(user, {

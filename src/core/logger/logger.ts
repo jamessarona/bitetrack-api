@@ -22,7 +22,6 @@ const baseOptions: LoggerOptions = {
   timestamp: pino.stdTimeFunctions.isoTime,
 };
 
-// Human-friendly, colorized logs in development; structured JSON everywhere else.
 const transport =
   config.isDevelopment && !config.isTest
     ? { target: 'pino-pretty', options: { colorize: true, translateTime: 'SYS:standard' } }

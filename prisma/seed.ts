@@ -1,6 +1,17 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import dotenv from 'dotenv';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
 import argon2 from 'argon2';
+
+const nodeEnv = process.env.NODE_ENV ?? 'development';
+for (const file of [`.env.${nodeEnv}`, '.env']) {
+  const fullPath = path.resolve(process.cwd(), file);
+  if (fs.existsSync(fullPath)) {
+    dotenv.config({ path: fullPath, override: false });
+  }
+}
 
 const connectionString = process.env.DATABASE_URL;
 if (!connectionString) {
@@ -22,7 +33,6 @@ const CATEGORIES = [
 ];
 
 async function main(): Promise<void> {
-  // Categories
   for (const category of CATEGORIES) {
     await prisma.category.upsert({
       where: { slug: category.slug },
@@ -31,7 +41,6 @@ async function main(): Promise<void> {
     });
   }
 
-  // Platform administrator
   const adminPassword = await argon2.hash('ChangeMe123!');
   await prisma.user.upsert({
     where: { email: 'admin@bitetrack.app' },
@@ -46,7 +55,6 @@ async function main(): Promise<void> {
     },
   });
 
-  // Sample vendor with a profile
   const tahoCategory = await prisma.category.findUnique({ where: { slug: 'taho' } });
   const vendorPassword = await argon2.hash('ChangeMe123!');
   await prisma.user.upsert({

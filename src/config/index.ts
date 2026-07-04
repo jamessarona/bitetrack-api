@@ -1,9 +1,5 @@
 import { env, isDevelopment, isProduction, isTest } from './env';
 
-/**
- * Structured, feature-grouped application configuration.
- * Consume this instead of reading `process.env` directly anywhere else.
- */
 export const config = {
   env: env.NODE_ENV,
   isDevelopment,

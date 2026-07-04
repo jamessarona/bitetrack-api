@@ -1,9 +1,6 @@
 export type UserRole = 'CUSTOMER' | 'VENDOR' | 'ADMIN';
 export type UserStatus = 'ACTIVE' | 'SUSPENDED' | 'DELETED';
 
-/**
- * Domain representation of a user, decoupled from the persistence model.
- */
 export interface UserEntity {
   id: string;
   email: string;
@@ -16,7 +13,6 @@ export interface UserEntity {
   createdAt: Date;
 }
 
-/** A user safe to expose over the API (no secrets). */
 export interface PublicUser {
   id: string;
   email: string;

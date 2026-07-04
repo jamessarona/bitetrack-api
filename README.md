@@ -181,7 +181,8 @@ See [`.env.sample`](.env.sample) for the full list. Key variables:
 |----------|-------------|
 | `NODE_ENV` | `development` \| `test` \| `staging` \| `production` |
 | `PORT` | HTTP port (default `4000`) |
-| `DATABASE_URL` | PostgreSQL connection string |
+| `DATABASE_URL` | PostgreSQL connection string (`bitetrack_app` database; dev schema `bitetrack_dev`) |
+| `POSTGRES_DB` | Database name (default `bitetrack_app`) |
 | `REDIS_URL` | Redis connection string |
 | `JWT_ACCESS_SECRET` | Access token signing secret |
 | `JWT_REFRESH_SECRET` | Refresh token signing secret |
@@ -221,6 +222,7 @@ Each feature or logical change gets its own commit for a clean history.
 | Redis connection refused | `docker compose up -d redis` |
 | Prisma client out of date | `npm run prisma:generate` |
 | Migration drift | `npm run db:reset` (dev only — destroys data) |
+| Database name or schema changed | Recreate Postgres volume: `docker compose down -v && docker compose up -d`, then `npm run prisma:deploy` |
 
 ---
 

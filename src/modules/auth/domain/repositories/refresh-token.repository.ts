@@ -14,9 +14,6 @@ export interface StoredRefreshToken {
   revokedAt: Date | null;
 }
 
-/**
- * Persistence port for refresh tokens (rotation + revocation support).
- */
 export interface RefreshTokenRepository {
   create(input: CreateRefreshTokenInput): Promise<void>;
   findByHash(tokenHash: string): Promise<StoredRefreshToken | null>;

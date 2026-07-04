@@ -7,14 +7,11 @@ export interface AccessTokenPayload {
 }
 
 export interface GeneratedRefreshToken {
-  /** The raw token returned to the client. */
   token: string;
-  /** SHA-256 hash persisted server-side (never store the raw token). */
   tokenHash: string;
   expiresAt: Date;
 }
 
-/** Port for issuing/verifying JWT access tokens and opaque refresh tokens. */
 export interface TokenService {
   signAccessToken(payload: AccessTokenPayload): string;
   verifyAccessToken(token: string): AccessTokenPayload;

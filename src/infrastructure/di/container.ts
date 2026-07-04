@@ -11,10 +11,6 @@ import { PrismaRefreshTokenRepository } from '@/modules/auth/infrastructure/pers
 
 let initialized = false;
 
-/**
- * Registers infrastructure singletons and module bindings into the tsyringe
- * container. Safe to call multiple times (idempotent).
- */
 export function setupContainer(): void {
   if (initialized) return;
 

@@ -8,9 +8,6 @@ export interface CreateUserInput {
   lastName?: string | undefined;
 }
 
-/**
- * Persistence port for users. Implemented in the infrastructure layer.
- */
 export interface UserRepository {
   findById(id: string): Promise<UserEntity | null>;
   findByEmail(email: string): Promise<UserEntity | null>;

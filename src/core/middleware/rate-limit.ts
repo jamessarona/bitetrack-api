@@ -4,9 +4,6 @@ import { config } from '@/config';
 import { fail } from '@/core/http/api-response';
 import { redis } from '@/infrastructure/cache/redis';
 
-/**
- * Distributed rate limiter backed by Redis so limits hold across replicas.
- */
 export const apiRateLimiter = rateLimit({
   windowMs: config.rateLimit.windowMs,
   limit: config.rateLimit.max,

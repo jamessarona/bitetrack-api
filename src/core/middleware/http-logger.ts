@@ -2,10 +2,6 @@ import { randomUUID } from 'node:crypto';
 import { pinoHttp } from 'pino-http';
 import { logger } from '@/core/logger/logger';
 
-/**
- * Per-request structured logging. Attaches (or reuses) an `x-request-id`
- * and exposes a request-scoped child logger via `req.log`.
- */
 export const httpLogger = pinoHttp({
   logger,
   genReqId: (req, res) => {
