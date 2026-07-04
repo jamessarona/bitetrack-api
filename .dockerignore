@@ -1,0 +1,30 @@
+node_modules
+dist
+coverage
+.git
+.gitignore
+.github
+.husky
+.vscode
+.idea
+*.log
+logs
+tmp
+temp
+
+# Never bake secrets into images
+.env
+.env.local
+.env.*.local
+
+# Dev-only files
+tests
+**/*.spec.ts
+**/*.test.ts
+README.md
+docker-compose*.yml
+.dockerignore
+.editorconfig
+.prettier*
+eslint.config.mjs
+.nvmrc
