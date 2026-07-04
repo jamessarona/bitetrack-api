@@ -8,6 +8,8 @@ import {
   logoutSchema,
   refreshSchema,
   registerSchema,
+  updatePreferencesSchema,
+  updateProfileSchema,
 } from './validators/auth.validator';
 
 export const authRouter = Router();
@@ -18,3 +20,15 @@ authRouter.post('/google', validateBody(googleSignInSchema), authController.goog
 authRouter.post('/refresh', validateBody(refreshSchema), authController.refresh);
 authRouter.post('/logout', validateBody(logoutSchema), authController.logout);
 authRouter.get('/me', authenticate, authController.me);
+authRouter.patch(
+  '/me/preferences',
+  authenticate,
+  validateBody(updatePreferencesSchema),
+  authController.updatePreferences,
+);
+authRouter.patch(
+  '/me/profile',
+  authenticate,
+  validateBody(updateProfileSchema),
+  authController.updateProfile,
+);

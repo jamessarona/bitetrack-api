@@ -9,12 +9,16 @@ import { RefreshTokenUseCase } from '../application/use-cases/refresh-token.use-
 import { LogoutUseCase } from '../application/use-cases/logout.use-case';
 import { GetCurrentUserUseCase } from '../application/use-cases/get-current-user.use-case';
 import { GoogleSignInUseCase } from '../application/use-cases/google-sign-in.use-case';
+import { UpdateUserPreferencesUseCase } from '../application/use-cases/update-user-preferences.use-case';
+import { UpdateUserProfileUseCase } from '../application/use-cases/update-user-profile.use-case';
 import {
   type GoogleSignInBody,
   type LoginBody,
   type LogoutBody,
   type RefreshBody,
   type RegisterBody,
+  type UpdatePreferencesBody,
+  type UpdateProfileBody,
 } from './validators/auth.validator';
 import { type AuthenticatedRequest } from './middleware/authenticate';
 
@@ -66,6 +70,22 @@ export class AuthController {
     const auth = (req as AuthenticatedRequest).auth;
     const useCase = container.resolve(GetCurrentUserUseCase);
     const user = await useCase.execute(auth.sub);
+    res.status(StatusCodes.OK).json(ok(user));
+  });
+
+  updatePreferences = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+    const auth = (req as AuthenticatedRequest).auth;
+    const body = req.body as UpdatePreferencesBody;
+    const useCase = container.resolve(UpdateUserPreferencesUseCase);
+    const user = await useCase.execute(auth.sub, body);
+    res.status(StatusCodes.OK).json(ok(user));
+  });
+
+  updateProfile = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+    const auth = (req as AuthenticatedRequest).auth;
+    const body = req.body as UpdateProfileBody;
+    const useCase = container.resolve(UpdateUserProfileUseCase);
+    const user = await useCase.execute(auth.sub, body);
     res.status(StatusCodes.OK).json(ok(user));
   });
 }

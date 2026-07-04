@@ -5,6 +5,8 @@ import {
   type CreateGoogleUserInput,
   type CreateUserInput,
   type LinkGoogleAccountInput,
+  type UpdateUserPreferencesInput,
+  type UpdateUserProfileInput,
   type UserRepository,
 } from '../../domain/repositories/user.repository';
 import { type UserEntity } from '../../domain/entities/user.entity';
@@ -76,6 +78,41 @@ export class PrismaUserRepository implements UserRepository {
     return this.toEntity(row);
   }
 
+  async updatePreferences(
+    userId: string,
+    input: UpdateUserPreferencesInput,
+  ): Promise<UserEntity> {
+    const row = await this.prisma.user.update({
+      where: { id: userId },
+      data: { themePreference: input.themePreference },
+    });
+    return this.toEntity(row);
+  }
+
+  async updateProfile(userId: string, input: UpdateUserProfileInput): Promise<UserEntity> {
+    const data: {
+      firstName?: string | null;
+      lastName?: string | null;
+      phone?: string | null;
+    } = {};
+
+    if (input.firstName !== undefined) {
+      data.firstName = input.firstName;
+    }
+    if (input.lastName !== undefined) {
+      data.lastName = input.lastName;
+    }
+    if (input.phone !== undefined) {
+      data.phone = input.phone;
+    }
+
+    const row = await this.prisma.user.update({
+      where: { id: userId },
+      data,
+    });
+    return this.toEntity(row);
+  }
+
   private toEntity(row: {
     id: string;
     email: string;
@@ -85,7 +122,9 @@ export class PrismaUserRepository implements UserRepository {
     status: UserEntity['status'];
     firstName: string | null;
     lastName: string | null;
+    phone: string | null;
     emailVerifiedAt: Date | null;
+    themePreference: UserEntity['themePreference'];
     createdAt: Date;
   }): UserEntity {
     return {
@@ -97,7 +136,9 @@ export class PrismaUserRepository implements UserRepository {
       status: row.status,
       firstName: row.firstName,
       lastName: row.lastName,
+      phone: row.phone,
       emailVerifiedAt: row.emailVerifiedAt,
+      themePreference: row.themePreference,
       createdAt: row.createdAt,
     };
   }

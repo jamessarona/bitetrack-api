@@ -1,9 +1,8 @@
-import { type PublicUser, type UserRole } from '../../domain/entities/user.entity';
+import { type PublicUser } from '../../domain/entities/user.entity';
 
 export interface RegisterInput {
   email: string;
   password: string;
-  role: UserRole;
   firstName?: string | undefined;
   lastName?: string | undefined;
 }

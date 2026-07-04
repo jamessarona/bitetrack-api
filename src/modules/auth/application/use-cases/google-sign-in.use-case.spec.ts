@@ -23,7 +23,9 @@ const googleUser: UserEntity = {
   status: 'ACTIVE',
   firstName: 'Google',
   lastName: 'User',
+  phone: null,
   emailVerifiedAt: new Date('2026-01-01T00:00:00.000Z'),
+  themePreference: 'SYSTEM',
   createdAt: new Date('2026-01-01T00:00:00.000Z'),
 };
 
@@ -35,6 +37,7 @@ const authResult = {
     status: googleUser.status,
     firstName: googleUser.firstName,
     lastName: googleUser.lastName,
+    themePreference: 'SYSTEM' as const,
   },
   accessToken: 'access-token',
   refreshToken: 'refresh-token',
@@ -48,6 +51,7 @@ describe('GoogleSignInUseCase', () => {
     create: jest.fn(),
     createGoogleUser: jest.fn(),
     linkGoogleAccount: jest.fn(),
+    updatePreferences: jest.fn(),
   };
 
   const googleOAuth: jest.Mocked<GoogleOAuthService> = {

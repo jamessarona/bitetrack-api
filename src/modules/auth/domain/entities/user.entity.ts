@@ -1,5 +1,6 @@
 export type UserRole = 'CUSTOMER' | 'VENDOR' | 'ADMIN';
 export type UserStatus = 'ACTIVE' | 'SUSPENDED' | 'DELETED';
+export type ThemePreference = 'LIGHT' | 'DARK' | 'SYSTEM';
 
 export interface UserEntity {
   id: string;
@@ -10,7 +11,9 @@ export interface UserEntity {
   status: UserStatus;
   firstName: string | null;
   lastName: string | null;
+  phone: string | null;
   emailVerifiedAt: Date | null;
+  themePreference: ThemePreference;
   createdAt: Date;
 }
 
@@ -21,6 +24,8 @@ export interface PublicUser {
   status: UserStatus;
   firstName: string | null;
   lastName: string | null;
+  phone: string | null;
+  themePreference: ThemePreference;
 }
 
 export function toPublicUser(user: UserEntity): PublicUser {
@@ -31,5 +36,7 @@ export function toPublicUser(user: UserEntity): PublicUser {
     status: user.status,
     firstName: user.firstName,
     lastName: user.lastName,
+    phone: user.phone,
+    themePreference: user.themePreference,
   };
 }

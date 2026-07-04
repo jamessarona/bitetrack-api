@@ -14,7 +14,9 @@ const activeUser: UserEntity = {
   status: 'ACTIVE',
   firstName: 'Test',
   lastName: 'User',
+  phone: null,
   emailVerifiedAt: null,
+  themePreference: 'SYSTEM',
   createdAt: new Date('2026-01-01T00:00:00.000Z'),
 };
 
@@ -26,6 +28,7 @@ const authResult = {
     status: activeUser.status,
     firstName: activeUser.firstName,
     lastName: activeUser.lastName,
+    themePreference: 'SYSTEM' as const,
   },
   accessToken: 'access-token',
   refreshToken: 'refresh-token',
@@ -39,6 +42,8 @@ describe('LoginUseCase', () => {
     create: jest.fn(),
     createGoogleUser: jest.fn(),
     linkGoogleAccount: jest.fn(),
+    updatePreferences: jest.fn(),
+    updateProfile: jest.fn(),
   };
 
   const passwordHasher: jest.Mocked<PasswordHasher> = {

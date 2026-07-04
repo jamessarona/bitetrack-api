@@ -4,6 +4,8 @@ import {
   logoutSchema,
   refreshSchema,
   registerSchema,
+  updatePreferencesSchema,
+  updateProfileSchema,
 } from './auth.validator';
 
 describe('auth validators', () => {
@@ -11,12 +13,11 @@ describe('auth validators', () => {
     const parsed = registerSchema.parse({
       email: 'user@test.com',
       password: 'password123',
-      role: 'CUSTOMER',
       firstName: 'Test',
     });
 
     expect(parsed.email).toBe('user@test.com');
-    expect(parsed.role).toBe('CUSTOMER');
+    expect(parsed.firstName).toBe('Test');
   });
 
   it('rejects invalid register email', () => {
@@ -50,5 +51,21 @@ describe('auth validators', () => {
   it('validates google sign-in payload', () => {
     const parsed = googleSignInSchema.parse({ idToken: 'google-id-token' });
     expect(parsed.idToken).toBe('google-id-token');
+  });
+
+  it('validates update preferences payload', () => {
+    const parsed = updatePreferencesSchema.parse({ themePreference: 'DARK' });
+    expect(parsed.themePreference).toBe('DARK');
+  });
+
+  it('validates update profile payload', () => {
+    const parsed = updateProfileSchema.parse({
+      firstName: 'Test',
+      lastName: 'User',
+      phone: '+639171234567',
+    });
+
+    expect(parsed.firstName).toBe('Test');
+    expect(parsed.phone).toBe('+639171234567');
   });
 });
