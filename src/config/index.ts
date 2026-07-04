@@ -26,7 +26,9 @@ export const config = {
     origins:
       env.CORS_ORIGINS === '*'
         ? '*'
-        : env.CORS_ORIGINS.split(',').map((origin) => origin.trim()).filter(Boolean),
+        : env.CORS_ORIGINS.split(',')
+            .map((origin) => origin.trim())
+            .filter(Boolean),
   },
 
   database: {

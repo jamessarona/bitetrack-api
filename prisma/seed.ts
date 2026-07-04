@@ -70,13 +70,11 @@ async function main(): Promise<void> {
     },
   });
 
-  // eslint-disable-next-line no-console
   console.log('Seed completed: categories, admin, and sample vendor.');
 }
 
 main()
   .catch((error: unknown) => {
-    // eslint-disable-next-line no-console
     console.error('Seed failed:', error);
     process.exitCode = 1;
   })

@@ -26,9 +26,7 @@ function loadDotenvFiles(): void {
 
 loadDotenvFiles();
 
-const booleanFromString = z
-  .enum(['true', 'false'])
-  .transform((value) => value === 'true');
+const booleanFromString = z.enum(['true', 'false']).transform((value) => value === 'true');
 
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'staging', 'production']).default('development'),
@@ -36,9 +34,7 @@ const envSchema = z.object({
   HOST: z.string().min(1).default('0.0.0.0'),
   PORT: z.coerce.number().int().positive().default(4000),
   API_PREFIX: z.string().startsWith('/').default('/api/v1'),
-  LOG_LEVEL: z
-    .enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal', 'silent'])
-    .default('info'),
+  LOG_LEVEL: z.enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal', 'silent']).default('info'),
 
   CORS_ORIGINS: z.string().default('*'),
 
@@ -59,7 +55,7 @@ const envSchema = z.object({
   RATE_LIMIT_WINDOW_MS: z.coerce.number().int().positive().default(60_000),
   RATE_LIMIT_MAX: z.coerce.number().int().positive().default(100),
 
-  TRUST_PROXY: booleanFromString.default('false'),
+  TRUST_PROXY: booleanFromString.default(false),
 });
 
 export type Env = z.infer<typeof envSchema>;
@@ -71,7 +67,6 @@ function parseEnv(): Env {
     const issues = parsed.error.issues
       .map((issue) => `  - ${issue.path.join('.')}: ${issue.message}`)
       .join('\n');
-    // eslint-disable-next-line no-console
     console.error(`\nInvalid environment configuration:\n${issues}\n`);
     throw new Error('Environment validation failed. See errors above.');
   }

@@ -20,7 +20,9 @@ export default tseslint.config(
         ...globals.jest,
       },
       parserOptions: {
-        projectService: true,
+        projectService: {
+          allowDefaultProject: ['*.config.ts', '*.config.mjs', '*.config.cjs'],
+        },
         tsconfigRootDir: import.meta.dirname,
       },
     },
@@ -47,6 +49,13 @@ export default tseslint.config(
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/unbound-method': 'off',
+    },
+  },
+  {
+    // Seed and standalone scripts may log to stdout.
+    files: ['prisma/**/*.ts', '*.config.ts'],
+    rules: {
+      'no-console': 'off',
     },
   },
   prettier,
