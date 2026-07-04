@@ -12,6 +12,12 @@ build/
 .env.local
 .env.*.local
 
+client_secret*.json
+*credentials*.json
+*.pem
+*.p12
+*.key
+
 logs/
 *.log
 npm-debug.log*
@@ -31,6 +37,7 @@ Thumbs.db
 .vscode/*
 !.vscode/extensions.json
 !.vscode/settings.json
+.cursor/
 
 docker-data/
 
