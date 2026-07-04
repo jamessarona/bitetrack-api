@@ -8,6 +8,7 @@ import { Argon2PasswordHasher } from '@/modules/auth/infrastructure/security/arg
 import { JwtTokenService } from '@/modules/auth/infrastructure/security/jwt-token.service';
 import { PrismaUserRepository } from '@/modules/auth/infrastructure/persistence/prisma-user.repository';
 import { PrismaRefreshTokenRepository } from '@/modules/auth/infrastructure/persistence/prisma-refresh-token.repository';
+import { AuthTokenIssuer } from '@/modules/auth/application/services/auth-token-issuer';
 
 let initialized = false;
 
@@ -23,6 +24,7 @@ export function setupContainer(): void {
   container.register(DI.RefreshTokenRepository, {
     useClass: PrismaRefreshTokenRepository,
   });
+  container.register(AuthTokenIssuer, { useClass: AuthTokenIssuer });
 
   initialized = true;
 }

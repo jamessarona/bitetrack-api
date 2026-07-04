@@ -14,7 +14,7 @@ export class RefreshTokenUseCase {
     @inject(DI.RefreshTokenRepository)
     private readonly refreshTokens: RefreshTokenRepository,
     @inject(DI.TokenService) private readonly tokenService: TokenService,
-    private readonly tokenIssuer: AuthTokenIssuer,
+    @inject(AuthTokenIssuer) private readonly tokenIssuer: AuthTokenIssuer,
   ) {}
 
   async execute(input: RefreshInput): Promise<AuthResult> {

@@ -11,7 +11,7 @@ export class LoginUseCase {
   constructor(
     @inject(DI.UserRepository) private readonly users: UserRepository,
     @inject(DI.PasswordHasher) private readonly passwordHasher: PasswordHasher,
-    private readonly tokenIssuer: AuthTokenIssuer,
+    @inject(AuthTokenIssuer) private readonly tokenIssuer: AuthTokenIssuer,
   ) {}
 
   async execute(input: LoginInput): Promise<AuthResult> {
