@@ -23,6 +23,14 @@ enum UserStatus {
   @@schema("bitetrack_dev")
 }
 
+enum ThemePreference {
+  LIGHT
+  DARK
+  SYSTEM
+
+  @@schema("bitetrack_dev")
+}
+
 enum VendorVerificationStatus {
   PENDING
   VERIFIED
@@ -79,6 +87,7 @@ model User {
   phone           String?
   avatarUrl       String?
   emailVerifiedAt DateTime?
+  themePreference ThemePreference @default(SYSTEM)
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
 
