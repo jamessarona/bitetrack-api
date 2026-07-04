@@ -24,7 +24,7 @@ export class RegisterUseCase {
     const user = await this.users.create({
       email: input.email,
       passwordHash,
-      role: input.role,
+      role: 'CUSTOMER',
       firstName: input.firstName,
       lastName: input.lastName,
     });

@@ -14,7 +14,9 @@ const newUser: UserEntity = {
   status: 'ACTIVE',
   firstName: 'New',
   lastName: null,
+  phone: null,
   emailVerifiedAt: null,
+  themePreference: 'SYSTEM',
   createdAt: new Date('2026-01-01T00:00:00.000Z'),
 };
 
@@ -26,6 +28,7 @@ const authResult = {
     status: newUser.status,
     firstName: newUser.firstName,
     lastName: newUser.lastName,
+    themePreference: 'SYSTEM' as const,
   },
   accessToken: 'access-token',
   refreshToken: 'refresh-token',
@@ -39,6 +42,7 @@ describe('RegisterUseCase', () => {
     create: jest.fn(),
     createGoogleUser: jest.fn(),
     linkGoogleAccount: jest.fn(),
+    updatePreferences: jest.fn(),
   };
 
   const passwordHasher: jest.Mocked<PasswordHasher> = {
@@ -65,7 +69,6 @@ describe('RegisterUseCase', () => {
     const result = await useCase.execute({
       email: 'new@test.com',
       password: 'password123',
-      role: 'CUSTOMER',
       firstName: 'New',
     });
 
@@ -86,7 +89,6 @@ describe('RegisterUseCase', () => {
       useCase.execute({
         email: 'new@test.com',
         password: 'password123',
-        role: 'CUSTOMER',
       }),
     ).rejects.toThrow(new ConflictError('An account with this email already exists'));
   });
