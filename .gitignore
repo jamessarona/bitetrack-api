@@ -8,8 +8,10 @@ dist/
 build/
 *.tsbuildinfo
 
-# Environment files (never commit real secrets)
+# Environment files — only .env.sample is tracked; copy it per environment locally.
 .env
+.env.*
+!.env.sample
 .env.local
 .env.*.local
 

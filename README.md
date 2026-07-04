@@ -50,22 +50,25 @@ Built with **Node.js (LTS)**, **TypeScript**, **Express**, **Prisma ORM**, **Pos
 git clone <repo-url> bitetrack-api
 cd bitetrack-api
 npm ci
+cp .env.sample .env.development
 ```
 
 ### 2. Environment
 
-Development defaults are committed in `.env.development`. To override locally:
+Copy the sample file for the environment you want to run:
 
 ```bash
-cp .env.sample .env   # optional local overrides (git-ignored)
+cp .env.sample .env.development
+# optional local overrides (also git-ignored)
+cp .env.sample .env
 ```
 
 | File | Purpose |
 |------|---------|
-| `.env.sample` | Template with all variables documented |
-| `.env.development` | Safe local defaults (committed) |
-| `.env.staging` | Placeholders — secrets injected at deploy |
-| `.env.production` | Placeholders — secrets injected at deploy |
+| `.env.sample` | Template with all variables documented (committed) |
+| `.env.development` | Local dev — copy from sample (git-ignored) |
+| `.env.staging` | Staging — copy from sample; secrets injected at deploy (git-ignored) |
+| `.env.production` | Production — copy from sample; secrets injected at deploy (git-ignored) |
 
 > **Postgres host port:** defaults to **5433** on your machine (container stays on 5432) to avoid clashing with other local Postgres instances.
 
