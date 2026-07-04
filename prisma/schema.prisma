@@ -2,13 +2,11 @@
 // Docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["postgresqlExtensions"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider   = "postgresql"
-  extensions = [postgis, pg_trgm, vector, citext]
+  provider = "postgresql"
 }
 
 // ---------------------------------------------------------------------------
