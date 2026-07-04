@@ -1,6 +1,9 @@
 import 'reflect-metadata';
+import { setupContainer } from '@/infrastructure/di/container';
 import { logger } from '@/core/logger/logger';
 import { startServer } from '@/server';
+
+setupContainer();
 
 process.on('unhandledRejection', (reason) => {
   logger.fatal({ reason }, 'Unhandled promise rejection');
