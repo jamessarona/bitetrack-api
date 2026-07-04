@@ -1,0 +1,133 @@
+# ============================================================================
+# BiteTrack - local development stack
+# ----------------------------------------------------------------------------
+# Start ONLY the infra you don't want to install locally (Postgres + Redis):
+#   docker compose up -d
+#
+# Add the database / cache web UIs:
+#   docker compose --profile tools up -d
+#
+# Run the full stack including the API (hot-reload) in containers:
+#   docker compose --profile app up -d
+#
+# Variable defaults below mirror .env.development so it "just works".
+# ============================================================================
+
+name: bitetrack
+
+services:
+  postgres:
+    build:
+      context: ./docker/postgres
+    image: bitetrack/postgres:16-3.4
+    container_name: bitetrack-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-bitetrack}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-bitetrack}
+      POSTGRES_DB: ${POSTGRES_DB:-bitetrack}
+    ports:
+      - '${POSTGRES_PORT:-5432}:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-bitetrack} -d ${POSTGRES_DB:-bitetrack}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks:
+      - bitetrack
+
+  redis:
+    image: redis:7-alpine
+    container_name: bitetrack-redis
+    restart: unless-stopped
+    command: >
+      redis-server
+      --appendonly yes
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+    ports:
+      - '${REDIS_PORT:-6379}:6379'
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - bitetrack
+
+  # --- Optional developer tooling (profile: tools) ---
+  adminer:
+    image: adminer:4
+    container_name: bitetrack-adminer
+    restart: unless-stopped
+    profiles: ['tools']
+    ports:
+      - '8081:8080'
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+    depends_on:
+      - postgres
+    networks:
+      - bitetrack
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: bitetrack-redis-commander
+    restart: unless-stopped
+    profiles: ['tools']
+    environment:
+      REDIS_HOSTS: local:redis:6379
+    ports:
+      - '8082:8081'
+    depends_on:
+      - redis
+    networks:
+      - bitetrack
+
+  # --- API in a container with hot reload (profile: app) ---
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.development
+    image: bitetrack/api:dev
+    container_name: bitetrack-api
+    restart: unless-stopped
+    profiles: ['app']
+    env_file:
+      - .env.development
+    environment:
+      # Override hosts so the API reaches the compose services by name.
+      POSTGRES_HOST: postgres
+      REDIS_HOST: redis
+      DATABASE_URL: postgresql://${POSTGRES_USER:-bitetrack}:${POSTGRES_PASSWORD:-bitetrack}@postgres:5432/${POSTGRES_DB:-bitetrack}?schema=public
+      REDIS_URL: redis://redis:6379
+    ports:
+      - '${PORT:-4000}:4000'
+    volumes:
+      - ./src:/app/src
+      - ./prisma:/app/prisma
+      # Keep container node_modules isolated from the host.
+      - /app/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - bitetrack
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  bitetrack:
+    driver: bridge
