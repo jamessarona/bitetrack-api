@@ -2,6 +2,8 @@
 
 **Track your next bite.** Real-time mobile vendor discovery and tracking platform backend.
 
+> **AI agents:** Start with [`AGENTS.md`](AGENTS.md) and [`docs/BITETRACK_PRODUCT.md`](docs/BITETRACK_PRODUCT.md) for product scope and implementation truths.
+
 Built with **Node.js (LTS)**, **TypeScript**, **Express**, **Prisma ORM**, **PostgreSQL + PostGIS**, **Redis**, and **Socket.IO** — following **Clean Architecture**, **DDD**, and **modular monolith** patterns that stay microservice-ready.
 
 ---
