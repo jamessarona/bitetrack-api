@@ -31,21 +31,23 @@ enum ThemePreference {
   @@schema("bitetrack_dev")
 }
 
-enum VendorVerificationStatus {
+enum BusinessVerificationStatus {
   PENDING
   VERIFIED
   REJECTED
 
+  @@map("VendorVerificationStatus")
   @@schema("bitetrack_dev")
 }
 
-enum VendorStatus {
+enum BusinessStatus {
   OFFLINE
   ONLINE
   ON_ROUTE
   AVAILABLE
   BUSY
 
+  @@map("VendorStatus")
   @@schema("bitetrack_dev")
 }
 
@@ -76,22 +78,22 @@ enum NotificationType {
 }
 
 model User {
-  id              String     @id @default(uuid()) @db.Uuid
-  email           String     @unique @db.Citext
+  id              String          @id @default(uuid()) @db.Uuid
+  email           String          @unique @db.Citext
   passwordHash    String?
-  googleId        String?    @unique
-  role            UserRole   @default(CUSTOMER)
-  status          UserStatus @default(ACTIVE)
+  googleId        String?         @unique
+  role            UserRole        @default(CUSTOMER)
+  status          UserStatus      @default(ACTIVE)
   firstName       String?
   lastName        String?
   phone           String?
   avatarUrl       String?
   emailVerifiedAt DateTime?
   themePreference ThemePreference @default(SYSTEM)
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
 
-  vendorProfile VendorProfile?
+  businesses    Business[]
   refreshTokens RefreshToken[]
   reviews       Review[]
   favorites     Favorite[]
@@ -128,56 +130,59 @@ model Category {
   slug    String  @unique
   iconUrl String?
 
-  vendors VendorProfile[]
+  businesses Business[]
 
   @@index([name])
   @@map("categories")
   @@schema("bitetrack_dev")
 }
 
-model VendorProfile {
-  id                 String                   @id @default(uuid()) @db.Uuid
-  userId             String                   @unique @db.Uuid
-  categoryId         String?                  @db.Uuid
+model Business {
+  id                 String                     @id @default(uuid()) @db.Uuid
+  userId             String                     @db.Uuid
+  categoryId         String?                    @db.Uuid
+  slug               String                     @unique
   businessName       String
   description        String?
+  logoUrl            String?
   bannerUrl          String?
-  verificationStatus VendorVerificationStatus @default(PENDING)
-  status             VendorStatus             @default(OFFLINE)
-  averageRating      Float                    @default(0)
-  reviewCount        Int                      @default(0)
+  verificationStatus BusinessVerificationStatus @default(PENDING)
+  status             BusinessStatus             @default(OFFLINE)
+  averageRating      Float                      @default(0)
+  reviewCount        Int                        @default(0)
   lastLocation       Unsupported("geography(Point, 4326)")?
   lastSeenAt         DateTime?
-  createdAt          DateTime                 @default(now())
-  updatedAt          DateTime                 @updatedAt
+  createdAt          DateTime                   @default(now())
+  updatedAt          DateTime                   @updatedAt
 
-  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  category  Category?     @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  owner     User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category  Category?       @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   products  Product[]
   reviews   Review[]
   favorites Favorite[]
-  shifts    VendorShift[]
+  shifts    BusinessShift[]
 
+  @@index([userId])
   @@index([categoryId])
   @@index([status])
   @@index([verificationStatus])
-  @@map("vendor_profiles")
+  @@map("businesses")
   @@schema("bitetrack_dev")
 }
 
-model VendorShift {
-  id        String      @id @default(uuid()) @db.Uuid
-  vendorId  String      @db.Uuid
-  status    ShiftStatus @default(ACTIVE)
-  startedAt DateTime    @default(now())
-  endedAt   DateTime?
+model BusinessShift {
+  id         String      @id @default(uuid()) @db.Uuid
+  businessId String      @db.Uuid
+  status     ShiftStatus @default(ACTIVE)
+  startedAt  DateTime    @default(now())
+  endedAt    DateTime?
 
-  vendor    VendorProfile        @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  business  Business             @relation(fields: [businessId], references: [id], onDelete: Cascade)
   locations VendorLocationPing[]
 
-  @@index([vendorId])
+  @@index([businessId])
   @@index([status])
-  @@map("vendor_shifts")
+  @@map("business_shifts")
   @@schema("bitetrack_dev")
 }
 
@@ -189,7 +194,7 @@ model VendorLocationPing {
   speed      Float?
   recordedAt DateTime                             @default(now())
 
-  shift VendorShift @relation(fields: [shiftId], references: [id], onDelete: Cascade)
+  shift BusinessShift @relation(fields: [shiftId], references: [id], onDelete: Cascade)
 
   @@index([shiftId])
   @@index([recordedAt])
@@ -199,7 +204,7 @@ model VendorLocationPing {
 
 model Product {
   id          String   @id @default(uuid()) @db.Uuid
-  vendorId    String   @db.Uuid
+  businessId  String   @db.Uuid
   name        String
   description String?
   priceCents  Int      @default(0)
@@ -209,28 +214,28 @@ model Product {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  vendor VendorProfile @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
 
-  @@index([vendorId])
+  @@index([businessId])
   @@map("products")
   @@schema("bitetrack_dev")
 }
 
 model Review {
   id         String   @id @default(uuid()) @db.Uuid
-  vendorId   String   @db.Uuid
+  businessId String   @db.Uuid
   customerId String   @db.Uuid
   rating     Int
   comment    String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  vendor   VendorProfile @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  business Business      @relation(fields: [businessId], references: [id], onDelete: Cascade)
   customer User          @relation(fields: [customerId], references: [id], onDelete: Cascade)
   photos   ReviewPhoto[]
 
-  @@unique([vendorId, customerId])
-  @@index([vendorId])
+  @@unique([businessId, customerId])
+  @@index([businessId])
   @@map("reviews")
   @@schema("bitetrack_dev")
 }
@@ -250,14 +255,14 @@ model ReviewPhoto {
 model Favorite {
   id         String   @id @default(uuid()) @db.Uuid
   customerId String   @db.Uuid
-  vendorId   String   @db.Uuid
+  businessId String   @db.Uuid
   createdAt  DateTime @default(now())
 
-  customer User          @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  vendor   VendorProfile @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  customer User     @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
 
-  @@unique([customerId, vendorId])
-  @@index([vendorId])
+  @@unique([customerId, businessId])
+  @@index([businessId])
   @@map("favorites")
   @@schema("bitetrack_dev")
 }
