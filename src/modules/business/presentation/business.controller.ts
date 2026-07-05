@@ -10,10 +10,17 @@ import {
   DeleteBusinessUseCase,
   GetBusinessBySlugUseCase,
   ListCategoriesUseCase,
-  ListMyBusinessesUseCase,
+  ListNearbyBusinessesUseCase,
   ListPublicBusinessesUseCase,
   UpdateBusinessUseCase,
 } from '../application/use-cases/business.use-cases';
+import {
+  GetSellingStatusUseCase,
+  ListMyBusinessesWithLiveStatusUseCase,
+  StartSellingUseCase,
+  StopSellingUseCase,
+  UpdateSellingLocationUseCase,
+} from '../application/use-cases/selling.use-cases';
 import {
   CreateProductUseCase,
   DeleteProductUseCase,
@@ -25,6 +32,7 @@ import {
   type CreateProductBody,
   type UpdateBusinessBody,
   type UpdateProductBody,
+  type SellingLocationBody,
 } from './validators/business.validator';
 
 export class BusinessController {
@@ -46,6 +54,26 @@ export class BusinessController {
     res.status(StatusCodes.OK).json(ok(businesses));
   });
 
+  listNearbyBusinesses = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+    const latitude = Number.parseFloat(String(req.query.lat ?? req.query.latitude ?? ''));
+    const longitude = Number.parseFloat(String(req.query.lng ?? req.query.longitude ?? ''));
+    const radiusMeters =
+      typeof req.query.radiusMeters === 'string'
+        ? Number.parseInt(req.query.radiusMeters, 10)
+        : undefined;
+    const limit =
+      typeof req.query.limit === 'string' ? Number.parseInt(req.query.limit, 10) : undefined;
+
+    const useCase = container.resolve(ListNearbyBusinessesUseCase);
+    const businesses = await useCase.execute({
+      latitude,
+      longitude,
+      ...(radiusMeters && !Number.isNaN(radiusMeters) ? { radiusMeters } : {}),
+      ...(limit && !Number.isNaN(limit) ? { limit } : {}),
+    });
+    res.status(StatusCodes.OK).json(ok(businesses));
+  });
+
   getBusinessBySlug = asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const useCase = container.resolve(GetBusinessBySlugUseCase);
     const business = await useCase.execute(routeParam(req.params.slug, 'slug'));
@@ -62,7 +90,7 @@ export class BusinessController {
 
   listMyBusinesses = asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const auth = (req as AuthenticatedRequest).auth;
-    const useCase = container.resolve(ListMyBusinessesUseCase);
+    const useCase = container.resolve(ListMyBusinessesWithLiveStatusUseCase);
     const businesses = await useCase.execute(auth.sub);
     res.status(StatusCodes.OK).json(ok(businesses));
   });
@@ -129,6 +157,40 @@ export class BusinessController {
     const useCase = container.resolve(DeleteProductUseCase);
     await useCase.execute(routeParam(req.params.productId, 'productId'), auth.sub);
     res.status(StatusCodes.NO_CONTENT).send();
+  });
+
+  getSellingStatus = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+    const auth = (req as AuthenticatedRequest).auth;
+    const useCase = container.resolve(GetSellingStatusUseCase);
+    const status = await useCase.execute(routeParam(req.params.businessId, 'businessId'), auth.sub);
+    res.status(StatusCodes.OK).json(ok(status));
+  });
+
+  startSelling = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+    const auth = (req as AuthenticatedRequest).auth;
+    const body = req.body as SellingLocationBody;
+    const useCase = container.resolve(StartSellingUseCase);
+    const business = await useCase.execute(routeParam(req.params.businessId, 'businessId'), auth.sub, body);
+    res.status(StatusCodes.OK).json(ok(business));
+  });
+
+  stopSelling = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+    const auth = (req as AuthenticatedRequest).auth;
+    const useCase = container.resolve(StopSellingUseCase);
+    const business = await useCase.execute(routeParam(req.params.businessId, 'businessId'), auth.sub);
+    res.status(StatusCodes.OK).json(ok(business));
+  });
+
+  updateSellingLocation = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+    const auth = (req as AuthenticatedRequest).auth;
+    const body = req.body as SellingLocationBody;
+    const useCase = container.resolve(UpdateSellingLocationUseCase);
+    const business = await useCase.execute(
+      routeParam(req.params.businessId, 'businessId'),
+      auth.sub,
+      body,
+    );
+    res.status(StatusCodes.OK).json(ok(business));
   });
 }
 

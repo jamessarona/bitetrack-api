@@ -48,6 +48,13 @@ export interface BusinessRepository {
   findBySlugForOwner(slug: string, userId: string): Promise<BusinessEntity | null>;
   listByOwner(userId: string): Promise<BusinessEntity[]>;
   listPublic(params?: { categoryId?: string; limit?: number }): Promise<BusinessEntity[]>;
+  listNearbyPublic(params: {
+    latitude: number;
+    longitude: number;
+    radiusMeters?: number;
+    limit?: number;
+  }): Promise<NearbyBusinessRecord[]>;
+  countByOwner(userId: string): Promise<number>;
   slugExists(slug: string): Promise<boolean>;
   create(input: CreateBusinessInput): Promise<BusinessEntity>;
   update(id: string, input: UpdateBusinessInput): Promise<BusinessEntity>;
@@ -68,6 +75,12 @@ export interface CategoryRecord {
   name: string;
   slug: string;
   iconUrl: string | null;
+}
+
+export interface NearbyBusinessRecord extends BusinessEntity {
+  latitude: number;
+  longitude: number;
+  distanceMeters: number;
 }
 
 export interface CategoryRepository {

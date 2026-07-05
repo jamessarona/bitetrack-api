@@ -3,7 +3,7 @@ import { inject, injectable } from 'tsyringe';
 import { DI } from '@/infrastructure/di/tokens';
 import { slugify, withUniqueSuffix } from '@/core/utils/slug';
 import { BadRequestError, NotFoundError } from '@/core/errors';
-import { toPublicBusiness, type PublicBusiness } from '../../domain/entities/business.entity';
+import { toPublicBusiness, type PublicBusiness, toPublicBusinessNearby } from '../../domain/entities/business.entity';
 import {
   type BusinessRepository,
   type CategoryRepository,
@@ -99,6 +99,25 @@ export class ListPublicBusinessesUseCase {
   async execute(params?: { categoryId?: string; limit?: number }): Promise<PublicBusiness[]> {
     const rows = await this.businesses.listPublic(params);
     return rows.map(toPublicBusiness);
+  }
+}
+
+@injectable()
+export class ListNearbyBusinessesUseCase {
+  constructor(@inject(DI.BusinessRepository) private readonly businesses: BusinessRepository) {}
+
+  async execute(params: {
+    latitude: number;
+    longitude: number;
+    radiusMeters?: number;
+    limit?: number;
+  }): Promise<PublicBusiness[]> {
+    if (Number.isNaN(params.latitude) || Number.isNaN(params.longitude)) {
+      throw new BadRequestError('lat and lng query parameters are required');
+    }
+
+    const rows = await this.businesses.listNearbyPublic(params);
+    return rows.map(toPublicBusinessNearby);
   }
 }
 

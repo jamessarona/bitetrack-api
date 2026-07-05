@@ -35,6 +35,13 @@ export const updateProductSchema = z.object({
   isAvailable: z.boolean().optional(),
 });
 
+export const sellingLocationSchema = z.object({
+  latitude: z.number().min(-90).max(90),
+  longitude: z.number().min(-180).max(180),
+  heading: z.number().optional(),
+  speed: z.number().optional(),
+});
+
 export const createUploadSessionSchema = z.object({
   purpose: z.enum(['business_logo', 'business_banner', 'product_image']),
   contentType: z.enum(['image/jpeg', 'image/png', 'image/webp', 'image/gif']),
@@ -47,3 +54,4 @@ export type UpdateBusinessBody = z.infer<typeof updateBusinessSchema>;
 export type CreateProductBody = z.infer<typeof createProductSchema>;
 export type UpdateProductBody = z.infer<typeof updateProductSchema>;
 export type CreateUploadSessionBody = z.infer<typeof createUploadSessionSchema>;
+export type SellingLocationBody = z.infer<typeof sellingLocationSchema>;

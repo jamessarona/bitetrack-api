@@ -32,6 +32,9 @@ export interface PublicBusiness {
   averageRating: number;
   reviewCount: number;
   categoryId: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
+  distanceMeters?: number | null;
 }
 
 export function toPublicBusiness(business: BusinessEntity): PublicBusiness {
@@ -47,5 +50,20 @@ export function toPublicBusiness(business: BusinessEntity): PublicBusiness {
     averageRating: business.averageRating,
     reviewCount: business.reviewCount,
     categoryId: business.categoryId,
+  };
+}
+
+export function toPublicBusinessNearby(
+  business: BusinessEntity & {
+    latitude: number;
+    longitude: number;
+    distanceMeters: number;
+  },
+): PublicBusiness {
+  return {
+    ...toPublicBusiness(business),
+    latitude: business.latitude,
+    longitude: business.longitude,
+    distanceMeters: business.distanceMeters,
   };
 }

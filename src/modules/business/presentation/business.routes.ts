@@ -5,6 +5,7 @@ import { businessController } from './business.controller';
 import {
   createBusinessSchema,
   createProductSchema,
+  sellingLocationSchema,
   updateBusinessSchema,
   updateProductSchema,
 } from './validators/business.validator';
@@ -12,6 +13,7 @@ import {
 export const businessRouter = Router();
 
 businessRouter.get('/categories', businessController.listCategories);
+businessRouter.get('/businesses/nearby', businessController.listNearbyBusinesses);
 businessRouter.get('/businesses', businessController.listPublicBusinesses);
 businessRouter.get('/businesses/:slug', businessController.getBusinessBySlug);
 businessRouter.get('/businesses/:slug/products', businessController.listBusinessProductsBySlug);
@@ -39,5 +41,17 @@ meRouter.patch(
   businessController.updateProduct,
 );
 meRouter.delete('/products/:productId', businessController.deleteProduct);
+meRouter.get('/businesses/:businessId/selling', businessController.getSellingStatus);
+meRouter.post(
+  '/businesses/:businessId/selling/start',
+  validateBody(sellingLocationSchema),
+  businessController.startSelling,
+);
+meRouter.post('/businesses/:businessId/selling/stop', businessController.stopSelling);
+meRouter.post(
+  '/businesses/:businessId/selling/location',
+  validateBody(sellingLocationSchema),
+  businessController.updateSellingLocation,
+);
 
 businessRouter.use('/me', meRouter);
