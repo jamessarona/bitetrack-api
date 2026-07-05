@@ -51,14 +51,61 @@ const envSchema = z.object({
   GOOGLE_CLIENT_ID: z.string().optional(),
   GOOGLE_CLIENT_IDS: z.string().optional(),
 
-  STORAGE_DRIVER: z.enum(['gcs', 'local']).default('local'),
+  STORAGE_DRIVER: z.enum(['s3', 'gcs']).default('s3'),
   GCS_PROJECT_ID: z.string().optional(),
   GCS_BUCKET: z.string().optional(),
   GCS_KEY_FILE: z.string().optional(),
   GCS_PUBLIC_BASE_URL: z.string().url().default('https://storage.googleapis.com'),
   STORAGE_UPLOAD_URL_TTL_MS: z.coerce.number().int().positive().default(900_000),
-  LOCAL_STORAGE_DIR: z.string().default('uploads'),
-  LOCAL_STORAGE_PUBLIC_BASE_URL: z.string().default('http://localhost:4000/uploads'),
+
+  AWS_S3_BUCKET_NAME: z.string().optional(),
+  AWS_S3_ACCESS_KEY_ID: z.string().optional(),
+  AWS_S3_SECRET_ACCESS_KEY: z.string().optional(),
+  AWS_S3_REGION: z.string().default('us-west-1'),
+  AWS_S3_BASE_URL: z.string().url().optional(),
+}).superRefine((values, ctx) => {
+  if (values.NODE_ENV === 'test') {
+    return;
+  }
+
+  if (values.STORAGE_DRIVER === 's3') {
+    if (!values.AWS_S3_BUCKET_NAME?.trim()) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['AWS_S3_BUCKET_NAME'],
+        message: 'AWS_S3_BUCKET_NAME is required when STORAGE_DRIVER=s3',
+      });
+    }
+    if (!values.AWS_S3_ACCESS_KEY_ID?.trim()) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['AWS_S3_ACCESS_KEY_ID'],
+        message: 'AWS_S3_ACCESS_KEY_ID is required when STORAGE_DRIVER=s3',
+      });
+    }
+    if (!values.AWS_S3_SECRET_ACCESS_KEY?.trim()) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['AWS_S3_SECRET_ACCESS_KEY'],
+        message: 'AWS_S3_SECRET_ACCESS_KEY is required when STORAGE_DRIVER=s3',
+      });
+    }
+    if (!values.AWS_S3_BASE_URL?.trim()) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['AWS_S3_BASE_URL'],
+        message: 'AWS_S3_BASE_URL is required when STORAGE_DRIVER=s3',
+      });
+    }
+  }
+
+  if (values.STORAGE_DRIVER === 'gcs' && !values.GCS_BUCKET?.trim()) {
+    ctx.addIssue({
+      code: 'custom',
+      path: ['GCS_BUCKET'],
+      message: 'GCS_BUCKET is required when STORAGE_DRIVER=gcs',
+    });
+  }
 });
 
 export type Env = z.infer<typeof envSchema>;

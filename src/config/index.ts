@@ -65,8 +65,11 @@ export const config = {
     gcsKeyFile: env.GCS_KEY_FILE,
     publicBaseUrl: env.GCS_PUBLIC_BASE_URL,
     uploadUrlTtlMs: env.STORAGE_UPLOAD_URL_TTL_MS,
-    localDir: env.LOCAL_STORAGE_DIR,
-    localPublicBaseUrl: env.LOCAL_STORAGE_PUBLIC_BASE_URL,
+    s3Bucket: env.AWS_S3_BUCKET_NAME ?? '',
+    s3AccessKeyId: env.AWS_S3_ACCESS_KEY_ID ?? '',
+    s3SecretAccessKey: env.AWS_S3_SECRET_ACCESS_KEY ?? '',
+    s3Region: env.AWS_S3_REGION,
+    s3PublicBaseUrl: env.AWS_S3_BASE_URL ?? '',
   },
 } as const;
 

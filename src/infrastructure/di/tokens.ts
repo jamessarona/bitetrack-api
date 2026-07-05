@@ -12,5 +12,6 @@ export const DI = {
   BusinessRepository: Symbol('BusinessRepository'),
   ProductRepository: Symbol('ProductRepository'),
   CategoryRepository: Symbol('CategoryRepository'),
+  SellingRepository: Symbol('SellingRepository'),
   ObjectStorageService: Symbol('ObjectStorageService'),
 } as const;
