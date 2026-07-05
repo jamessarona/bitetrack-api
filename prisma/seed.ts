@@ -56,29 +56,35 @@ async function main(): Promise<void> {
   });
 
   const tahoCategory = await prisma.category.findUnique({ where: { slug: 'taho' } });
-  const vendorPassword = await argon2.hash('ChangeMe123!');
-  await prisma.user.upsert({
-    where: { email: 'vendor@bitetrack.app' },
+  const demoPassword = await argon2.hash('ChangeMe123!');
+  const demoUser = await prisma.user.upsert({
+    where: { email: 'demo@bitetrack.app' },
     update: {},
     create: {
-      email: 'vendor@bitetrack.app',
-      passwordHash: vendorPassword,
-      role: 'VENDOR',
+      email: 'demo@bitetrack.app',
+      passwordHash: demoPassword,
+      role: 'CUSTOMER',
       firstName: 'Mang',
       lastName: 'Juan',
       emailVerifiedAt: new Date(),
-      vendorProfile: {
-        create: {
-          businessName: "Mang Juan's Taho",
-          description: 'Fresh, warm taho every morning.',
-          verificationStatus: 'VERIFIED',
-          ...(tahoCategory ? { categoryId: tahoCategory.id } : {}),
-        },
-      },
     },
   });
 
-  console.log('Seed completed: categories, admin, and sample vendor.');
+  await prisma.business.upsert({
+    where: { slug: 'mang-juans-taho' },
+    update: {},
+    create: {
+      userId: demoUser.id,
+      slug: 'mang-juans-taho',
+      businessName: "Mang Juan's Taho",
+      description: 'Fresh, warm taho every morning.',
+      verificationStatus: 'VERIFIED',
+      status: 'OFFLINE',
+      ...(tahoCategory ? { categoryId: tahoCategory.id } : {}),
+    },
+  });
+
+  console.log('Seed completed: categories, admin, and sample business.');
 }
 
 main()
