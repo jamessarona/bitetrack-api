@@ -57,6 +57,17 @@ export const config = {
   google: {
     clientIds: parseGoogleClientIds(env.GOOGLE_CLIENT_IDS ?? env.GOOGLE_CLIENT_ID),
   },
+
+  storage: {
+    driver: env.STORAGE_DRIVER,
+    gcsProjectId: env.GCS_PROJECT_ID,
+    gcsBucket: env.GCS_BUCKET ?? 'bitetrack-media-dev',
+    gcsKeyFile: env.GCS_KEY_FILE,
+    publicBaseUrl: env.GCS_PUBLIC_BASE_URL,
+    uploadUrlTtlMs: env.STORAGE_UPLOAD_URL_TTL_MS,
+    localDir: env.LOCAL_STORAGE_DIR,
+    localPublicBaseUrl: env.LOCAL_STORAGE_PUBLIC_BASE_URL,
+  },
 } as const;
 
 function parseGoogleClientIds(value?: string): string[] {

@@ -8,4 +8,9 @@ export const DI = {
   TokenService: Symbol('TokenService'),
   GoogleOAuthClient: Symbol('GoogleOAuthClient'),
   GoogleOAuthService: Symbol('GoogleOAuthService'),
+
+  BusinessRepository: Symbol('BusinessRepository'),
+  ProductRepository: Symbol('ProductRepository'),
+  CategoryRepository: Symbol('CategoryRepository'),
+  ObjectStorageService: Symbol('ObjectStorageService'),
 } as const;

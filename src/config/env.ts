@@ -50,6 +50,15 @@ const envSchema = z.object({
 
   GOOGLE_CLIENT_ID: z.string().optional(),
   GOOGLE_CLIENT_IDS: z.string().optional(),
+
+  STORAGE_DRIVER: z.enum(['gcs', 'local']).default('local'),
+  GCS_PROJECT_ID: z.string().optional(),
+  GCS_BUCKET: z.string().optional(),
+  GCS_KEY_FILE: z.string().optional(),
+  GCS_PUBLIC_BASE_URL: z.string().url().default('https://storage.googleapis.com'),
+  STORAGE_UPLOAD_URL_TTL_MS: z.coerce.number().int().positive().default(900_000),
+  LOCAL_STORAGE_DIR: z.string().default('uploads'),
+  LOCAL_STORAGE_PUBLIC_BASE_URL: z.string().default('http://localhost:4000/uploads'),
 });
 
 export type Env = z.infer<typeof envSchema>;

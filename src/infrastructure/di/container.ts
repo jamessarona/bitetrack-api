@@ -12,6 +12,12 @@ import { PrismaUserRepository } from '@/modules/auth/infrastructure/persistence/
 import { PrismaRefreshTokenRepository } from '@/modules/auth/infrastructure/persistence/prisma-refresh-token.repository';
 import { AuthTokenIssuer } from '@/modules/auth/application/services/auth-token-issuer';
 import { GoogleOAuthServiceImpl } from '@/modules/auth/infrastructure/security/google-oauth.service';
+import { PrismaBusinessRepository } from '@/modules/business/infrastructure/persistence/prisma-business.repository';
+import { PrismaProductRepository } from '@/modules/business/infrastructure/persistence/prisma-product.repository';
+import { PrismaCategoryRepository } from '@/modules/business/infrastructure/persistence/prisma-category.repository';
+import { GcsObjectStorageService } from '@/modules/media/infrastructure/gcs-object-storage.service';
+import { LocalObjectStorageService } from '@/modules/media/infrastructure/local-object-storage.service';
+import { type ObjectStorageService } from '@/modules/media/application/ports/object-storage';
 
 let initialized = false;
 
@@ -35,6 +41,14 @@ export function setupContainer(): void {
     });
     container.register(DI.GoogleOAuthService, { useClass: GoogleOAuthServiceImpl });
   }
+
+  container.register(DI.BusinessRepository, { useClass: PrismaBusinessRepository });
+  container.register(DI.ProductRepository, { useClass: PrismaProductRepository });
+  container.register(DI.CategoryRepository, { useClass: PrismaCategoryRepository });
+
+  const storageClass =
+    config.storage.driver === 'gcs' ? GcsObjectStorageService : LocalObjectStorageService;
+  container.register<ObjectStorageService>(DI.ObjectStorageService, { useClass: storageClass });
 
   initialized = true;
 }
