@@ -13,7 +13,7 @@ const newUser: UserEntity = {
   role: 'CUSTOMER',
   status: 'ACTIVE',
   firstName: 'New',
-  lastName: null,
+  lastName: 'User',
   phone: null,
   emailVerifiedAt: null,
   themePreference: 'SYSTEM',
@@ -70,6 +70,7 @@ describe('RegisterUseCase', () => {
       email: 'new@test.com',
       password: 'password123',
       firstName: 'New',
+      lastName: 'User',
     });
 
     expect(result).toEqual(authResult);
@@ -78,7 +79,7 @@ describe('RegisterUseCase', () => {
       passwordHash: 'hashed-password',
       role: 'CUSTOMER',
       firstName: 'New',
-      lastName: undefined,
+      lastName: 'User',
     });
   });
 
@@ -89,6 +90,8 @@ describe('RegisterUseCase', () => {
       useCase.execute({
         email: 'new@test.com',
         password: 'password123',
+        firstName: 'New',
+        lastName: 'User',
       }),
     ).rejects.toThrow(new ConflictError('An account with this email already exists'));
   });

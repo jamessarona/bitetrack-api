@@ -6,6 +6,17 @@ import { type AuthResult, type GoogleSignInInput } from '../dtos/auth.dto';
 import { type GoogleOAuthService } from '../ports/google-oauth';
 import { AuthTokenIssuer } from '../services/auth-token-issuer';
 
+function resolveGoogleNames(profile: {
+  email: string;
+  firstName?: string | null;
+  lastName?: string | null;
+}): { firstName: string; lastName: string } {
+  const emailLocal = profile.email.split('@')[0]?.trim() ?? 'User';
+  const firstName = profile.firstName?.trim() || emailLocal || 'User';
+  const lastName = profile.lastName?.trim() || 'User';
+  return { firstName, lastName };
+}
+
 @injectable()
 export class GoogleSignInUseCase {
   constructor(
@@ -31,11 +42,12 @@ export class GoogleSignInUseCase {
           emailVerifiedAt: profile.emailVerified ? new Date() : byEmail.emailVerifiedAt,
         });
       } else {
+        const names = resolveGoogleNames(profile);
         user = await this.users.createGoogleUser({
           email: profile.email,
           googleId: profile.googleId,
-          firstName: profile.firstName,
-          lastName: profile.lastName,
+          firstName: names.firstName,
+          lastName: names.lastName,
           avatarUrl: profile.avatarUrl,
           emailVerifiedAt: profile.emailVerified ? new Date() : null,
         });

@@ -7,6 +7,7 @@ import {
   type ThemePreference,
 } from '../../domain/entities/user.entity';
 import { type UserRepository } from '../../domain/repositories/user.repository';
+import { type BusinessRepository } from '@/modules/business/domain/repositories/business.repository';
 
 export interface UpdateUserPreferencesInput {
   themePreference: ThemePreference;
@@ -14,7 +15,10 @@ export interface UpdateUserPreferencesInput {
 
 @injectable()
 export class UpdateUserPreferencesUseCase {
-  constructor(@inject(DI.UserRepository) private readonly users: UserRepository) {}
+  constructor(
+    @inject(DI.UserRepository) private readonly users: UserRepository,
+    @inject(DI.BusinessRepository) private readonly businesses: BusinessRepository,
+  ) {}
 
   async execute(userId: string, input: UpdateUserPreferencesInput): Promise<PublicUser> {
     const existing = await this.users.findById(userId);
@@ -23,6 +27,7 @@ export class UpdateUserPreferencesUseCase {
     }
 
     const user = await this.users.updatePreferences(userId, input);
-    return toPublicUser(user);
+    const businessCount = await this.businesses.countByOwner(userId);
+    return toPublicUser(user, businessCount);
   }
 }

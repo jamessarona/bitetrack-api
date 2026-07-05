@@ -14,10 +14,21 @@ describe('auth validators', () => {
       email: 'user@test.com',
       password: 'password123',
       firstName: 'Test',
+      lastName: 'User',
     });
 
     expect(parsed.email).toBe('user@test.com');
     expect(parsed.firstName).toBe('Test');
+    expect(parsed.lastName).toBe('User');
+  });
+
+  it('rejects register payload without names', () => {
+    expect(() =>
+      registerSchema.parse({
+        email: 'user@test.com',
+        password: 'password123',
+      }),
+    ).toThrow();
   });
 
   it('rejects invalid register email', () => {

@@ -4,15 +4,15 @@ export interface CreateUserInput {
   email: string;
   passwordHash: string;
   role: UserRole;
-  firstName?: string | undefined;
-  lastName?: string | undefined;
+  firstName: string;
+  lastName: string;
 }
 
 export interface CreateGoogleUserInput {
   email: string;
   googleId: string;
-  firstName?: string | null;
-  lastName?: string | null;
+  firstName: string;
+  lastName: string;
   avatarUrl?: string | null;
   emailVerifiedAt?: Date | null;
 }
@@ -28,8 +28,8 @@ export interface UpdateUserPreferencesInput {
 }
 
 export interface UpdateUserProfileInput {
-  firstName?: string | null | undefined;
-  lastName?: string | null | undefined;
+  firstName?: string | undefined;
+  lastName?: string | undefined;
   phone?: string | null | undefined;
 }
 

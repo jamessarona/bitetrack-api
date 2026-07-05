@@ -2,6 +2,7 @@ import { inject, injectable } from 'tsyringe';
 import { DI } from '@/infrastructure/di/tokens';
 import { toPublicUser, type UserEntity } from '../../domain/entities/user.entity';
 import { type RefreshTokenRepository } from '../../domain/repositories/refresh-token.repository';
+import { type BusinessRepository } from '@/modules/business/domain/repositories/business.repository';
 import { type AuthResult } from '../dtos/auth.dto';
 import { type TokenService } from '../ports/token-service';
 
@@ -16,6 +17,7 @@ export class AuthTokenIssuer {
     @inject(DI.TokenService) private readonly tokenService: TokenService,
     @inject(DI.RefreshTokenRepository)
     private readonly refreshTokens: RefreshTokenRepository,
+    @inject(DI.BusinessRepository) private readonly businesses: BusinessRepository,
   ) {}
 
   async issue(user: UserEntity, context: IssueContext = {}): Promise<AuthResult> {
@@ -34,8 +36,10 @@ export class AuthTokenIssuer {
       ipAddress: context.ipAddress,
     });
 
+    const businessCount = await this.businesses.countByOwner(user.id);
+
     return {
-      user: toPublicUser(user),
+      user: toPublicUser(user, businessCount),
       accessToken,
       refreshToken: refresh.token,
     };

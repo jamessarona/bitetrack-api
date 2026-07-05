@@ -1,6 +1,7 @@
 import { NotFoundError } from '@/core/errors';
 import { type UserEntity } from '../../domain/entities/user.entity';
 import { type UserRepository } from '../../domain/repositories/user.repository';
+import { type BusinessRepository } from '@/modules/business/domain/repositories/business.repository';
 import { UpdateUserPreferencesUseCase } from './update-user-preferences.use-case';
 
 const activeUser: UserEntity = {
@@ -29,10 +30,15 @@ describe('UpdateUserPreferencesUseCase', () => {
     updatePreferences: jest.fn(),
   };
 
-  const useCase = new UpdateUserPreferencesUseCase(users);
+  const businesses: jest.Mocked<Pick<BusinessRepository, 'countByOwner'>> = {
+    countByOwner: jest.fn(),
+  };
+
+  const useCase = new UpdateUserPreferencesUseCase(users, businesses as unknown as BusinessRepository);
 
   beforeEach(() => {
     jest.clearAllMocks();
+    businesses.countByOwner.mockResolvedValue(0);
   });
 
   it('updates theme preference and returns public user', async () => {

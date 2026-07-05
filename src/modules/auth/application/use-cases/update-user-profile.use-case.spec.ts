@@ -1,6 +1,7 @@
-import { NotFoundError } from '@/core/errors';
+import { BadRequestError, NotFoundError } from '@/core/errors';
 import { type UserEntity } from '../../domain/entities/user.entity';
 import { type UserRepository } from '../../domain/repositories/user.repository';
+import { type BusinessRepository } from '@/modules/business/domain/repositories/business.repository';
 import { UpdateUserProfileUseCase } from './update-user-profile.use-case';
 
 const activeUser: UserEntity = {
@@ -30,10 +31,15 @@ describe('UpdateUserProfileUseCase', () => {
     updateProfile: jest.fn(),
   };
 
-  const useCase = new UpdateUserProfileUseCase(users);
+  const businesses: jest.Mocked<Pick<BusinessRepository, 'countByOwner'>> = {
+    countByOwner: jest.fn(),
+  };
+
+  const useCase = new UpdateUserProfileUseCase(users, businesses as unknown as BusinessRepository);
 
   beforeEach(() => {
     jest.clearAllMocks();
+    businesses.countByOwner.mockResolvedValue(0);
   });
 
   it('updates profile fields and returns public user', async () => {
@@ -56,16 +62,23 @@ describe('UpdateUserProfileUseCase', () => {
     expect(result.phone).toBe('+639171234567');
   });
 
-  it('clears optional fields when empty strings are sent', async () => {
+  it('clears phone when empty string is sent', async () => {
     users.findById.mockResolvedValue(activeUser);
-    users.updateProfile.mockResolvedValue({ ...activeUser, lastName: null, phone: null });
+    users.updateProfile.mockResolvedValue({ ...activeUser, phone: null });
 
-    await useCase.execute(activeUser.id, { lastName: '   ', phone: '' });
+    await useCase.execute(activeUser.id, { phone: '' });
 
     expect(users.updateProfile).toHaveBeenCalledWith(activeUser.id, {
-      lastName: null,
       phone: null,
     });
+  });
+
+  it('rejects empty last name updates', async () => {
+    users.findById.mockResolvedValue(activeUser);
+
+    await expect(
+      useCase.execute(activeUser.id, { lastName: '   ' }),
+    ).rejects.toThrow(new BadRequestError('Last name is required'));
   });
 
   it('throws when user is not found', async () => {

@@ -3,8 +3,8 @@ import { type PublicUser } from '../../domain/entities/user.entity';
 export interface RegisterInput {
   email: string;
   password: string;
-  firstName?: string | undefined;
-  lastName?: string | undefined;
+  firstName: string;
+  lastName: string;
 }
 
 export interface LoginInput {

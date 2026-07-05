@@ -36,8 +36,8 @@ export class PrismaUserRepository implements UserRepository {
         email: input.email,
         passwordHash: input.passwordHash,
         role: input.role,
-        firstName: input.firstName ?? null,
-        lastName: input.lastName ?? null,
+        firstName: input.firstName,
+        lastName: input.lastName,
       },
     });
     return this.toEntity(row);
@@ -48,8 +48,8 @@ export class PrismaUserRepository implements UserRepository {
       data: {
         email: input.email,
         googleId: input.googleId,
-        firstName: input.firstName ?? null,
-        lastName: input.lastName ?? null,
+        firstName: input.firstName,
+        lastName: input.lastName,
         avatarUrl: input.avatarUrl ?? null,
         emailVerifiedAt: input.emailVerifiedAt ?? null,
       },
@@ -91,8 +91,8 @@ export class PrismaUserRepository implements UserRepository {
 
   async updateProfile(userId: string, input: UpdateUserProfileInput): Promise<UserEntity> {
     const data: {
-      firstName?: string | null;
-      lastName?: string | null;
+      firstName?: string;
+      lastName?: string;
       phone?: string | null;
     } = {};
 
@@ -120,8 +120,8 @@ export class PrismaUserRepository implements UserRepository {
     googleId: string | null;
     role: UserEntity['role'];
     status: UserEntity['status'];
-    firstName: string | null;
-    lastName: string | null;
+    firstName: string;
+    lastName: string;
     phone: string | null;
     emailVerifiedAt: Date | null;
     themePreference: UserEntity['themePreference'];

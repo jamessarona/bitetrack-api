@@ -1,4 +1,4 @@
-export type UserRole = 'CUSTOMER' | 'VENDOR' | 'ADMIN';
+export type UserRole = 'CUSTOMER' | 'ADMIN';
 export type UserStatus = 'ACTIVE' | 'SUSPENDED' | 'DELETED';
 export type ThemePreference = 'LIGHT' | 'DARK' | 'SYSTEM';
 
@@ -9,8 +9,8 @@ export interface UserEntity {
   googleId: string | null;
   role: UserRole;
   status: UserStatus;
-  firstName: string | null;
-  lastName: string | null;
+  firstName: string;
+  lastName: string;
   phone: string | null;
   emailVerifiedAt: Date | null;
   themePreference: ThemePreference;
@@ -22,13 +22,14 @@ export interface PublicUser {
   email: string;
   role: UserRole;
   status: UserStatus;
-  firstName: string | null;
-  lastName: string | null;
+  firstName: string;
+  lastName: string;
   phone: string | null;
   themePreference: ThemePreference;
+  businessCount: number;
 }
 
-export function toPublicUser(user: UserEntity): PublicUser {
+export function toPublicUser(user: UserEntity, businessCount = 0): PublicUser {
   return {
     id: user.id,
     email: user.email,
@@ -38,5 +39,6 @@ export function toPublicUser(user: UserEntity): PublicUser {
     lastName: user.lastName,
     phone: user.phone,
     themePreference: user.themePreference,
+    businessCount,
   };
 }
