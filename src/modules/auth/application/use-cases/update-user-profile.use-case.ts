@@ -2,19 +2,31 @@ import { inject, injectable } from 'tsyringe';
 import { DI } from '@/infrastructure/di/tokens';
 import { NotFoundError } from '@/core/errors';
 import { toPublicUser, type PublicUser } from '../../domain/entities/user.entity';
-import { type UserRepository } from '../../domain/repositories/user.repository';
+import {
+  type UpdateUserProfileInput,
+  type UserRepository,
+} from '../../domain/repositories/user.repository';
 
-export interface UpdateUserProfileInput {
-  firstName?: string | null;
-  lastName?: string | null;
-  phone?: string | null;
-}
-
-function normalizeOptionalText(value: string | null | undefined): string | null | undefined {
-  if (value === undefined) return undefined;
+function normalizeOptionalText(value: string | null): string | null {
   if (value === null) return null;
   const trimmed = value.trim();
   return trimmed.length > 0 ? trimmed : null;
+}
+
+function buildProfilePatch(input: UpdateUserProfileInput): UpdateUserProfileInput {
+  const patch: UpdateUserProfileInput = {};
+
+  if (input.firstName !== undefined) {
+    patch.firstName = normalizeOptionalText(input.firstName);
+  }
+  if (input.lastName !== undefined) {
+    patch.lastName = normalizeOptionalText(input.lastName);
+  }
+  if (input.phone !== undefined) {
+    patch.phone = normalizeOptionalText(input.phone);
+  }
+
+  return patch;
 }
 
 @injectable()
@@ -27,11 +39,7 @@ export class UpdateUserProfileUseCase {
       throw new NotFoundError('User not found');
     }
 
-    const user = await this.users.updateProfile(userId, {
-      firstName: normalizeOptionalText(input.firstName),
-      lastName: normalizeOptionalText(input.lastName),
-      phone: normalizeOptionalText(input.phone),
-    });
+    const user = await this.users.updateProfile(userId, buildProfilePatch(input));
 
     return toPublicUser(user);
   }

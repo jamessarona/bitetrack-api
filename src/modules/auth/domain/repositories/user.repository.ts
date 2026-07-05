@@ -28,9 +28,9 @@ export interface UpdateUserPreferencesInput {
 }
 
 export interface UpdateUserProfileInput {
-  firstName?: string | null;
-  lastName?: string | null;
-  phone?: string | null;
+  firstName?: string | null | undefined;
+  lastName?: string | null | undefined;
+  phone?: string | null | undefined;
 }
 
 export interface UserRepository {

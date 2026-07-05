@@ -63,7 +63,6 @@ describe('UpdateUserProfileUseCase', () => {
     await useCase.execute(activeUser.id, { lastName: '   ', phone: '' });
 
     expect(users.updateProfile).toHaveBeenCalledWith(activeUser.id, {
-      firstName: undefined,
       lastName: null,
       phone: null,
     });
