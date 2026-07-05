@@ -84,6 +84,17 @@ async function main(): Promise<void> {
     },
   });
 
+  await prisma.business.update({
+    where: { slug: 'mang-juans-taho' },
+    data: { status: 'ONLINE' },
+  });
+
+  await prisma.$executeRaw`
+    UPDATE "bitetrack_dev"."businesses"
+    SET "lastLocation" = ST_SetSRID(ST_MakePoint(120.9842, 14.5995), 4326)::geography
+    WHERE "slug" = 'mang-juans-taho'
+  `;
+
   console.log('Seed completed: categories, admin, and sample business.');
 }
 

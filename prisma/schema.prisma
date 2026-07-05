@@ -9,7 +9,6 @@ datasource db {
 
 enum UserRole {
   CUSTOMER
-  VENDOR
   ADMIN
 
   @@schema("bitetrack_dev")
@@ -67,8 +66,8 @@ enum DevicePlatform {
 }
 
 enum NotificationType {
-  VENDOR_NEARBY
-  FAVORITE_VENDOR_NEARBY
+  BUSINESS_NEARBY
+  FAVORITE_BUSINESS_NEARBY
   PROMOTION
   SHIFT_STARTED
   SHIFT_ENDED
@@ -84,8 +83,8 @@ model User {
   googleId        String?         @unique
   role            UserRole        @default(CUSTOMER)
   status          UserStatus      @default(ACTIVE)
-  firstName       String?
-  lastName        String?
+  firstName       String
+  lastName        String
   phone           String?
   avatarUrl       String?
   emailVerifiedAt DateTime?
@@ -178,7 +177,7 @@ model BusinessShift {
   endedAt    DateTime?
 
   business  Business             @relation(fields: [businessId], references: [id], onDelete: Cascade)
-  locations VendorLocationPing[]
+  locations BusinessLocationPing[]
 
   @@index([businessId])
   @@index([status])
@@ -186,7 +185,7 @@ model BusinessShift {
   @@schema("bitetrack_dev")
 }
 
-model VendorLocationPing {
+model BusinessLocationPing {
   id         String                               @id @default(uuid()) @db.Uuid
   shiftId    String                               @db.Uuid
   location   Unsupported("geography(Point, 4326)")
@@ -198,7 +197,7 @@ model VendorLocationPing {
 
   @@index([shiftId])
   @@index([recordedAt])
-  @@map("vendor_location_pings")
+  @@map("business_location_pings")
   @@schema("bitetrack_dev")
 }
 
